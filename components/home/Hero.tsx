@@ -31,6 +31,7 @@ export default function Hero() {
     const sides = el.querySelectorAll<HTMLElement>(".hero-side");
     const head = el.querySelector<HTMLElement>(".hero-head")!;
     const parts = el.querySelectorAll<HTMLElement>("[data-hero-in]");
+    const titleLines = el.querySelectorAll<HTMLElement>("[data-hero-line]");
     const bar = el.querySelector<HTMLElement>(".hero-progress i");
 
     // The closed state in pixels, measured from a probe sized by the same custom properties as the CSS clip
@@ -45,12 +46,15 @@ export default function Hero() {
     const ctx = gsap.context(() => {
       if (reduced) return;
       gsap.set(parts, { autoAlpha: 0, y: 18 });
+      gsap.set(titleLines, { yPercent: 110, filter: "blur(8px)" });
       gsap.set(frame, { clipPath: hidden() });
       gsap.set(sides, { yPercent: 40, autoAlpha: 0 });
 
       const enter = () => {
         const tl = gsap.timeline();
-        parts.forEach((p, i) => tl.to(p, { autoAlpha: 1, y: 0, duration: .6 + i * .1, ease: "lift-out" }, i * .1));
+        // The headline's lines rise out of their masks (the page's heading move, a little longer), then the buttons.
+        tl.to(titleLines, { yPercent: 0, filter: "blur(0px)", duration: 1.4, ease: "lift-out", stagger: .12 }, 0);
+        parts.forEach((p, i) => tl.to(p, { autoAlpha: 1, y: 0, duration: .7 + i * .1, ease: "lift-out" }, .35 + i * .1));
         tl.to(frame, { clipPath: closed(), duration: 1.2, ease: "lift-in-out" }, .1)
           .to(sides, { yPercent: 0, autoAlpha: 1, duration: 1.1, ease: "lift-out", stagger: .08 }, .3)
           .add(() => build(), "+=0");
@@ -103,8 +107,8 @@ export default function Hero() {
   return <section className="hero" ref={ref} aria-labelledby="hero-title">
     <div className="hero-head wrap">
       <h1 id="hero-title" className="hero-title">
-        <span className="hero-line" data-hero-in><em>{hero.title[0]}</em></span>
-        <span className="hero-line" data-hero-in>{hero.title[1]}</span>
+        <span className="hero-line sl"><span className="sli" data-hero-line><em>{hero.title[0]}</em></span></span>
+        <span className="hero-line sl"><span className="sli" data-hero-line>{hero.title[1]}</span></span>
       </h1>
       <div className="hero-actions" data-hero-in>
         <Button href={projects.href} count={projects.total} reveal={false}>All projects</Button>

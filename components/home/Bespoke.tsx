@@ -14,7 +14,7 @@ export default function Bespoke() {
       </figure>
       <div className="bespoke-title">
         <h2 id="bespoke-title" data-reveal="heading"><em>{bespoke.title}</em></h2>
-        <p data-reveal="label">{bespoke.sub}</p>
+        <p data-reveal="text">{bespoke.sub}</p>
         <Button href={bespoke.href} tone="bright">Explore</Button>
       </div>
     </div>

@@ -147,12 +147,13 @@ Smooth scroll: Lenis (`lerp .12`), on the GSAP ticker, synced with ScrollTrigger
 
 | Move | Where | What |
 |---|---|---|
-| heading | section titles | the whole phrase fades and rises 24px, 1.1s, lift-out |
-| text | paragraphs | each line's words fade up .4em, lines 0.1s apart, 0.9s |
-| label | buttons, small lines | fade and 12px rise, 0.6s |
-| card | logos, collection and project cards | batched 40px rise and fade, 0.1s apart, 0.9s |
+| heading | section titles, the hero headline | masked lines: each line rises from behind its own edge (110% → 0) while a 6px blur clears, 1.3s lift-out, lines 0.1s apart (hero: 8px blur, 1.4s) |
+| text | paragraphs, small print | masked lines, lighter: 100% → 0 with a fade, 1.05s, lines 0.08s apart |
+| label | buttons, contact rows | 14px rise, fade and a 4px blur clearing, 0.8s |
+| card | logos, collection and project cards | batched 40px rise and fade, 0.1s apart; the card's own text (`[data-rise]`) follows 0.25s later with the label move |
 | image | photos | clip opens from the bottom, 1.3s lift-in-out; `[data-parallax]` adds about 10% drift |
 
+Lines are split by `splitLines()` in `lib/split.ts` once the web fonts have loaded, so they match the real line breaks. Inline elements such as `<em>` are cloned around their words so styling survives, and the original markup comes back when the reveal ends, so later resizes reflow normally. A visually hidden copy of the text is what screen readers get.
 All play once. `[data-late]` sections (Explore, Contact) run at 75%. No per-character effects anywhere; no reveals in the footer. Header: no bar, colour from what is underneath, hides on scroll down, returns on scroll up. Menu: Stone sheet wipes down (.8s), columns fade in with Depoluxe's stagger, reverse to close, focus trapped, Esc closes, focus returns to the trigger.
 
 ## Private-demo settings

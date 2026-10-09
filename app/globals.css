@@ -102,6 +102,10 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 300; pointer-even
 html.js [data-reveal]:not([data-reveal="image"]):not([data-shown]) { opacity: 0; }
 html.js [data-reveal="image"]:not([data-shown]) { clip-path: inset(100% 0 0 0); }
 .sw { display: inline-block; white-space: nowrap; }
+/* Masked lines (lib/split.ts splitLines): the outer span clips, the inner one rises. The padding keeps descenders
+   and italic overhangs inside the mask; the negative margins give the space back so the layout does not move. */
+.sl { display: block; overflow: clip; padding: .02em .1em .14em; margin: -.02em -.1em -.14em; }
+.sli { display: block; will-change: transform; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

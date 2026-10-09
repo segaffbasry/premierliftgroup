@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { reducedMotion } from "@/components/ui";
 import { EASE_IN_OUT, EASE_OUT, EASE_TRAVEL, timing } from "@/lib/ease";
 import { getLenis, setLenis } from "@/lib/scroll";
-import { splitText, type Split } from "@/lib/split";
+import { splitLines, type LineSplit } from "@/lib/split";
 
 // Registered at module load so the preloader, hero and menu can build timelines on these eases in their own effects.
 if (typeof window !== "undefined") {
@@ -19,12 +19,14 @@ if (typeof window !== "undefined") {
 }
 
 /* The reveal set (README "Motion system"): one small fixed set of moves, applied the same way everywhere.
-   heading  the whole phrase fades and rises 24px as one, 1.1s, lift-out
-   text     paragraphs: each rendered line's words fade up .4em together, lines .1s apart (Depoluxe's info stagger)
-   label    buttons and small links: fade and 12px rise, .6s (Depoluxe's first info line)
-   card     batched: 40px rise and fade, .1s apart
+   heading  masked lines: each line rises from behind its own edge (110% → 0) while a 6px blur clears,
+            1.3s lift-out, lines .1s apart
+   text     masked lines, lighter: 100% → 0 with a fade, 1.05s, lines .08s apart (Depoluxe's info stagger)
+   label    buttons and small lines: 14px rise, fade and a 4px blur clearing, .8s
+   card     batched: 40px rise and fade, .1s apart; the card's own text ([data-rise]) follows .25s later
    image    clip opens from the bottom edge; [data-parallax] adds about 10% drift while it crosses the screen
-   All play once; inside [data-late] sections they run at 75% of the duration. */
+   Text is split once the web fonts are ready (so the lines are the real ones) and put back to its original
+   markup when its reveal ends. All play once; inside [data-late] sections they run at 75% of the duration. */
 export function usePageMotion() {
   useEffect(() => {
     const reduced = reducedMotion();
@@ -70,35 +72,42 @@ export function usePageMotion() {
     document.addEventListener("click", onClick);
 
     /* Reveals. */
-    const splits: Split[] = [];
+    const splits: LineSplit[] = [];
     const scale = (el: Element) => (el.closest("[data-late]") ? timing.late : 1);
     // data-shown lifts the CSS start-state guards (globals.css) once GSAP has set its own start states.
     const mark = () => document.querySelectorAll("[data-reveal]").forEach((el) => el.setAttribute("data-shown", ""));
-    const ctx = gsap.context(() => {
+    let ctx: gsap.Context | null = null;
+    let dead = false;
+    const setup = () => { if (dead) return; ctx = gsap.context(() => {
       if (reduced) { mark(); return; }
       const all = (kind: string) => gsap.utils.toArray<HTMLElement>(`[data-reveal="${kind}"]:not([data-hero] [data-reveal])`);
 
       all("label").forEach((el) => {
-        gsap.set(el, { autoAlpha: 0, y: 12 });
-        ScrollTrigger.create({ trigger: el, start: "top 92%", once: true, onEnter: () => gsap.to(el, { autoAlpha: 1, y: 0, duration: timing.label * scale(el), ease: "lift-out", clearProps: "transform" }) });
+        gsap.set(el, { autoAlpha: 0, y: 14, filter: "blur(4px)" });
+        ScrollTrigger.create({ trigger: el, start: "top 92%", once: true, onEnter: () => gsap.to(el, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: timing.label * scale(el), ease: "lift-out", clearProps: "transform,filter" }) });
       });
 
-      all("heading").forEach((el) => {
-        gsap.set(el, { autoAlpha: 0, y: timing.rise });
-        ScrollTrigger.create({ trigger: el, start: "top 90%", once: true, onEnter: () => gsap.to(el, { autoAlpha: 1, y: 0, duration: timing.heading * scale(el), ease: "lift-out", clearProps: "transform" }) });
-      });
-
-      all("text").forEach((el) => {
-        const split = splitText(el);
+      // Masked lines for headings and paragraphs; the split is undone when the last line has landed.
+      const lines = (el: HTMLElement, from: gsap.TweenVars, to: gsap.TweenVars, duration: number, stagger: number) => {
+        const split = splitLines(el);
         splits.push(split);
-        gsap.set(split.words, { autoAlpha: 0, y: "0.4em" });
+        gsap.set(split.lines, from);
         ScrollTrigger.create({ trigger: el, start: "top 90%", once: true, onEnter: () =>
-          split.lines.forEach((line, i) => gsap.to(line, { autoAlpha: 1, y: 0, duration: timing.text * scale(el), ease: "lift-out", delay: i * timing.lineStagger * scale(el) })) });
-      });
+          gsap.to(split.lines, { ...to, duration: duration * scale(el), ease: "lift-out", stagger: stagger * scale(el), onComplete: () => { split.revert(); splits.splice(splits.indexOf(split), 1); } }) });
+      };
+      all("heading").forEach((el) => lines(el, { yPercent: 110, filter: "blur(6px)" }, { yPercent: 0, filter: "blur(0px)" }, timing.heading, timing.headingStagger));
+      all("text").forEach((el) => lines(el, { yPercent: 100, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1 }, timing.text, timing.lineStagger));
 
+      // Cards rise as a batch; their own text ([data-rise]) follows a beat later with the label move.
       const cards = all("card");
+      const inner = (cs: Element[]) => cs.flatMap((c) => Array.from(c.querySelectorAll<HTMLElement>("[data-rise]")));
       gsap.set(cards, { autoAlpha: 0, y: 40 });
-      ScrollTrigger.batch(cards, { start: "top 92%", once: true, onEnter: (batch) => gsap.to(batch, { autoAlpha: 1, y: 0, duration: timing.card * scale(batch[0]), ease: "lift-out", stagger: timing.cardStagger * scale(batch[0]), overwrite: true, clearProps: "transform" }) });
+      gsap.set(inner(cards), { autoAlpha: 0, y: 12, filter: "blur(4px)" });
+      ScrollTrigger.batch(cards, { start: "top 92%", once: true, onEnter: (batch) => {
+        const k = scale(batch[0]);
+        gsap.to(batch, { autoAlpha: 1, y: 0, duration: timing.card * k, ease: "lift-out", stagger: timing.cardStagger * k, overwrite: true, clearProps: "transform" });
+        gsap.to(inner(batch), { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: timing.label * k, ease: "lift-out", stagger: .06 * k, delay: .25 * k, clearProps: "transform,filter" });
+      } });
 
       all("image").forEach((el) => {
         gsap.set(el, { clipPath: "inset(100% 0% 0% 0%)" });
@@ -111,7 +120,9 @@ export function usePageMotion() {
         gsap.fromTo(media, { yPercent: -5, scale: 1.12 }, { yPercent: 5, scale: 1.12, ease: "none", scrollTrigger: { trigger: el, scrub: true, start: "top bottom", end: "bottom top" } });
       });
       mark();
-    });
+    }); };
+    if (reduced) setup();
+    else void (document.fonts?.ready ?? Promise.resolve()).then(setup);
 
     /* The header takes its colour from whatever is under it: [data-tone="dark"] areas flip it to white type. */
     let frame = 0;
@@ -140,7 +151,8 @@ export function usePageMotion() {
       document.removeEventListener("hero:update", queue);
       window.removeEventListener("scroll", queue); window.removeEventListener("resize", queue); window.removeEventListener("load", refresh);
       cancelAnimationFrame(frame);
-      ctx.revert();
+      dead = true;
+      ctx?.revert();
       splits.forEach((split) => split.revert());
       if (tick) gsap.ticker.remove(tick);
       lenis?.destroy(); setLenis(null);

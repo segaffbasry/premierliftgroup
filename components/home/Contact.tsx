@@ -13,9 +13,9 @@ export default function Contact() {
       <div className="contact-main">
         <h2 id="contact-title" className="text-l" data-reveal="heading">{contact.title}</h2>
         <p data-reveal="text">{contact.text}</p>
-        <ul className="contact-lines" data-reveal="label">
-          {phones.map((p) => <li key={p.href}><span>{p.city}</span><a href={p.href} className="u-link">{p.number}</a></li>)}
-          <li><span>Email</span><a href={email.href} className="u-link">{email.label}</a></li>
+        <ul className="contact-lines">
+          {phones.map((p) => <li key={p.href} data-reveal="label"><span>{p.city}</span><a href={p.href} className="u-link">{p.number}</a></li>)}
+          <li data-reveal="label"><span>Email</span><a href={email.href} className="u-link">{email.label}</a></li>
         </ul>
         <Button href={contactLink.href} arrow>Contact us</Button>
       </div>
@@ -27,7 +27,7 @@ export default function Contact() {
           <input id="newsletter-email" type="email" name="email" placeholder="Email address" autoComplete="email" required />
           <button type="submit" className="button button-dark"><span className="button-text">Subscribe</span></button>
         </div>
-        <p className="newsletter-policy">By subscribing you agree to receiving marketing and promotional emails from us. More information can be found in our <a href={`${LIVE}/privacy-policy`} className="u-link" target="_blank" rel="noopener">privacy policy</a>.</p>
+        <p className="newsletter-policy" data-reveal="text">By subscribing you agree to receiving marketing and promotional emails from us. More information can be found in our <a href={`${LIVE}/privacy-policy`} className="u-link" target="_blank" rel="noopener">privacy policy</a>.</p>
       </form>
     </div>
   </section>;

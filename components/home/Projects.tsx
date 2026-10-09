@@ -48,8 +48,8 @@ export default function Projects() {
           <span className="project-media media">
             <video src={projects.film.src} poster={projects.film.poster} muted loop playsInline autoPlay preload="none" aria-hidden="true" />
           </span>
-          <span className="project-place">All projects</span>
-          <span className="project-type">View all {projects.total} projects</span>
+          <span className="project-place" data-rise>All projects</span>
+          <span className="project-type" data-rise>View all {projects.total} projects</span>
         </a>
       </li>
       {projects.items.map((p) => <li key={p.href} data-reveal="card">
@@ -58,8 +58,8 @@ export default function Projects() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={p.image} alt="" loading="lazy" />
           </span>
-          <span className="project-place">{p.place}</span>
-          <span className="project-type">{p.type}</span>
+          <span className="project-place" data-rise>{p.place}</span>
+          <span className="project-type" data-rise>{p.type}</span>
         </a>
       </li>)}
     </ul>

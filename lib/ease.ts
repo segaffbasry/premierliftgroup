@@ -14,11 +14,11 @@ export const EASE_IN_OUT = "0.6,0,0.3,1"; // "lift-in-out": the loader line, men
 export const EASE_TRAVEL = "0.75,0,0.25,1"; // "lift-travel": the logo flying to the header
 
 export const timing = {
-  heading: 1.1, // single fade and 24px rise of the whole phrase
-  rise: 24,
-  text: 0.9, // per line, under a mask
-  lineStagger: 0.1, // Depoluxe's info stagger
-  label: 0.6, // Depoluxe's first info line (.6s)
+  heading: 1.3, // masked line rise with a 6px blur clearing
+  headingStagger: 0.1, // Depoluxe's info stagger
+  text: 1.05, // masked line rise with a fade
+  lineStagger: 0.08,
+  label: 0.8, // rise, fade and a 4px blur clearing
   card: 0.9,
   cardStagger: 0.1,
   image: 1.3,

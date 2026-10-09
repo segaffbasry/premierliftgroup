@@ -33,12 +33,12 @@ export default function Collections() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={c.image} alt={c.alt} loading="lazy" />
               </span>
-              <span className="collection-row">
+              <span className="collection-row" data-rise>
                 <span className="collection-icon" aria-hidden="true" style={{ "--icon": `url(/media/icon-${c.id}.svg)` } as React.CSSProperties} />
                 <span className="collection-name">{c.name}</span>
                 <span className="collection-more">View collection <Arrow /></span>
               </span>
-              <span className="collection-line">{p.line}</span>
+              <span className="collection-line" data-rise>{p.line}</span>
             </a>
           </li>;
         })}
