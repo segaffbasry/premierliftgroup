@@ -1,0 +1,36 @@
+/* Buttons: Luxury Places' .button, value for value (theme CSS app.05abc0dd9887ec4c5b11.css, 2026-10-09):
+     .button             inline-flex, gap .5rem, padding .625rem .75rem, radius .13rem, 1px border
+     .button--dark       Ink ground, white label, muted count, border = ground
+     .button--bright     white ground, Ink label, hairline border (--color-lines)
+     .button--grey       pale ground (here Stone on white panels, white on Stone)
+     .button-text        12px capitals, nowrap, transition: color .3s ease-out
+     .button:hover .button-text  → --hover-color (white at 40% on dark, Ink at 40% on bright)
+   Only the label dims on hover; the box never moves. */
+.button { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .625rem .75rem; border-radius: var(--radius); background: var(--bg); color: var(--fg); border: 1px solid var(--border, var(--bg)); font-size: var(--fs-3xs); line-height: 1.66; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+.button-dark { --bg: var(--ink); --fg: var(--white); --hover: color-mix(in srgb, var(--white) 55%, var(--ink)); --add: color-mix(in srgb, var(--white) 55%, var(--ink)); }
+.button-bright { --bg: var(--white); --fg: var(--ink); --border: var(--line); --hover: color-mix(in srgb, var(--ink) 55%, var(--white)); --add: color-mix(in srgb, var(--ink) 55%, var(--white)); }
+.button-stone { --bg: var(--stone); --fg: var(--ink); --hover: color-mix(in srgb, var(--ink) 55%, var(--stone)); --add: var(--muted); }
+.button-text { overflow: hidden; text-overflow: ellipsis; transition: color var(--dur-btn) var(--ease-btn); }
+.button-additional { color: var(--add); }
+.button-icon { display: flex; color: var(--add); }
+.button-icon .arrow { width: 10px; height: 10px; }
+.button:hover .button-text, .button:focus-visible .button-text { color: var(--hover); }
+
+/* Depoluxe's .link-underline (main.b0b97476d709cb690ddf.css): a .5px currentColor line under the label that shows
+   on hover (.1s in, .2s out). Here at .8px so it holds on a 1x screen. */
+.link-underline { position: relative; display: inline-block; padding-block: 4px; }
+.link-underline::before { content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: .8px; background: currentColor; opacity: 0; transition: opacity .2s; }
+.link-underline:hover::before, .link-underline:focus-visible::before, .link-underline[aria-expanded="true"]::before { opacity: 1; transition-duration: .1s; }
+.u-link { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .45s var(--ease-out); }
+.u-link:hover, .u-link:focus-visible { background-size: 100% 1px; }
+
+.arrow { width: 12px; height: 12px; flex: none; }
+.arrow-back { transform: scaleX(-1); }
+
+/* Photo frames: natural colour, held at 92% saturation (house rule: no tint, slightly desaturated). */
+.media { position: relative; overflow: hidden; background: color-mix(in srgb, var(--ink) 8%, var(--stone)); }
+.media img, .media video { width: 100%; height: 100%; object-fit: cover; filter: saturate(.92); }
+
+.socials { display: flex; gap: 16px; align-items: center; }
+.socials a { display: inline-flex; padding: 4px; transition: opacity var(--dur-btn) var(--ease-btn); }
+.socials a:hover { opacity: .6; }

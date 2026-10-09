@@ -1,0 +1,109 @@
+/* Tokens, type and base. Palette: every value from premierliftgroup.co.uk's own files (read 2026-10-09):
+     --ink    #222222  the wordmark's fill (PREMIER_black.svg); Webflow's #333 body type is its lighter step
+     --gold   #92794A  the live CSS's bespoke colour (.heading-14.bespoke, .btn.standard.bespoke)
+     --stone  #F5F3F0  the live CSS's warm pale band (.section-home.b, .iso-container.bespoke)
+     --white  #FFFFFF
+   Stone is the page ground (Luxury Places sets its whole page on one pale ground, #F0F0F0), white is for panels,
+   Ink for type, buttons and the footer, Gold for the bespoke accents and the loader line. No other hues anywhere
+   (gradients, glows, hovers, focus rings included); tints below are mixes of these four. */
+
+@font-face { font-family: "Helvetica Neue LT Std"; src: url("/fonts/hn-roman.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Helvetica Neue LT Std"; src: url("/fonts/hn-bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Playfair Display"; src: url("/fonts/pf.woff2") format("woff2"); font-weight: 400 900; font-display: swap; }
+@font-face { font-family: "Playfair Display"; src: url("/fonts/pf-italic.woff2") format("woff2"); font-weight: 400 900; font-style: italic; font-display: swap; }
+
+:root {
+  --ink: #222222;
+  --gold: #92794A;
+  --stone: #F5F3F0;
+  --white: #FFFFFF;
+  --text: var(--ink);
+  --muted: color-mix(in srgb, var(--ink) 68%, var(--stone)); /* 5.6:1 on Stone */
+  --line: color-mix(in srgb, var(--ink) 10%, transparent); /* Luxury Places --color-lines rgba(0,0,0,.08) */
+  --on-dark: color-mix(in srgb, var(--white) 72%, var(--ink));
+  --gold-text: color-mix(in srgb, var(--gold) 80%, var(--ink)); /* Gold for small type on Stone/white: 5.2:1 */
+
+  --font: "Helvetica Neue LT Std", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --serif: "Playfair Display", Georgia, serif;
+
+  /* Easing family (lib/ease.ts): Luxury Places' curves and its .3s ease-out button transition. */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in-out: cubic-bezier(.6, 0, .3, 1);
+  --ease-travel: cubic-bezier(.75, 0, .25, 1);
+  --ease-btn: ease-out;
+  --dur-btn: .3s;
+  --radius: .13rem; /* Luxury Places --border-radius */
+
+  /* Spacing (brief: 64 to 96px desktop, 48 to 64px mobile; house rule about 80 to 88px). Luxury Places' own
+     --spacing-lg (clamp(3.5rem, 8.33vw, 7.5rem)) is capped here. --gap is their --spacing-md. */
+  --gutter: clamp(16px, 2.8vw, 40px); /* Luxury Places --container-gutter is 1rem; wider at desktop for the 1440 grid */
+  --section-y: clamp(56px, 6.1vw, 88px);
+  --gap: clamp(2.5rem, 5.5555555556vw, 5rem);
+  --gap-s: clamp(1rem, 2.2222222222vw, 2rem); /* --spacing-xxs */
+  --max: 1360px;
+  --header-h: 88px;
+
+  /* Type scale, Luxury Places' (.text-xl / .text-l / .text-m, all capitals, +.02em tracking, line-height 1.1).
+     Their Poppins 200 becomes Helvetica Neue 55 Roman (the live site's only text weights are 55 and 75). */
+  --fs-xl: clamp(2rem, 4.7222222222vw, 4.25rem);
+  --fs-l: clamp(1.75rem, 3.3vw, 3rem); /* their 3.5rem cap trimmed: Roman is heavier than Poppins 200 */
+  --fs-m: clamp(1.5rem, 2.2222222222vw, 2rem);
+  --fs-s: clamp(1.125rem, 1.4vw, 1.375rem);
+  --fs-lede: clamp(1.0625rem, 1.25vw, 1.1875rem);
+  --fs-body: 16px; /* Luxury Places body 16px/24px */
+  --fs-small: 14px;
+  --fs-3xs: 12px; /* .text-3xs, buttons and labels */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; background: var(--stone); overscroll-behavior-y: none; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+body {
+  margin: 0;
+  background: var(--stone);
+  color: var(--text);
+  font: 400 var(--fs-body)/1.5 var(--font);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  overscroll-behavior-y: none;
+}
+img, video, svg { display: block; max-width: 100%; }
+img, video { height: auto; }
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; color: inherit; text-transform: inherit; letter-spacing: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+ul { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p, figure, address, blockquote { margin: 0; font-style: normal; font-weight: 400; }
+em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; text-transform: none; }
+:focus-visible { outline: 1.5px solid var(--gold-text); outline-offset: 3px; }
+[data-tone="dark"] :focus-visible, .site-footer :focus-visible { outline-color: var(--white); }
+::selection { background: var(--gold); color: var(--white); }
+
+.wrap { width: 100%; max-width: calc(var(--max) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
+.text-xl, .text-l, .text-m { font-weight: 400; line-height: 1.1; letter-spacing: .02em; text-transform: uppercase; text-wrap: balance; }
+.text-xl { font-size: var(--fs-xl); }
+.text-l { font-size: var(--fs-l); }
+.text-m { font-size: var(--fs-m); }
+.text-s { font-size: var(--fs-s); line-height: 1.25; letter-spacing: .01em; text-transform: uppercase; }
+.lede { font-size: var(--fs-lede); line-height: 1.55; max-width: 60ch; }
+.small { font-size: var(--fs-small); line-height: 1.6; color: var(--muted); max-width: 64ch; }
+
+.skip-link { position: fixed; left: 16px; top: 16px; z-index: 200; padding: 10px 14px; border-radius: var(--radius); background: var(--ink); color: var(--white); transform: translateY(-160%); }
+.skip-link:focus { transform: none; }
+main:focus, section:focus, #top:focus { outline: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Luxury Places lays a 3% noise over the whole page (.noise, opacity .03); here a quiet SVG grain, Ink only. */
+body::after { content: ""; position: fixed; inset: 0; z-index: 300; pointer-events: none; opacity: .035; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .133 0 0 0 0 .133 0 0 0 0 .133 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* Reveal start states: hidden before first paint only when JS runs with motion (html.js), lifted by data-shown. */
+html.js [data-reveal]:not([data-reveal="image"]):not([data-shown]) { opacity: 0; }
+html.js [data-reveal="image"]:not([data-shown]) { clip-path: inset(100% 0 0 0); }
+.sw { display: inline-block; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .preloader { display: none !important; }
+}

@@ -1,0 +1,74 @@
+/* Header: frameless, in Luxury Places' arrangement (.header: links either side, logo centred, 12 to 13px capitals,
+   --header-spacing-block 1.5rem). html[data-header] follows what is underneath: "dark" = white type. */
+.site-header { position: fixed; inset: 0 0 auto; z-index: 90; height: var(--header-h); color: var(--ink); transition: transform .6s var(--ease-in-out), color .35s var(--ease-btn); pointer-events: none; }
+html[data-header="dark"] .site-header { color: var(--white); }
+.site-header.is-hidden { transform: translateY(-110%); }
+.site-header-inner { position: relative; height: 100%; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; }
+.site-header a, .site-header button { pointer-events: auto; }
+.header-links { display: flex; gap: clamp(16px, 1.8vw, 28px); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.header-right { display: flex; justify-content: flex-end; align-items: center; gap: clamp(16px, 1.8vw, 28px); }
+.brand { display: inline-flex; justify-self: center; }
+.brand .logo { width: clamp(120px, 10vw, 150px); height: auto; overflow: visible; }
+.menu-toggle { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; padding: 8px 0; }
+.menu-lines { display: grid; gap: 5px; width: 22px; }
+.menu-lines i { display: block; height: 1px; background: currentColor; transition: transform .35s var(--ease-out); }
+.menu-lines i:last-child { width: 60%; margin-left: auto; }
+.menu-toggle:hover .menu-lines i:last-child { transform: scaleX(1.67); transform-origin: right; }
+@media (min-width: 1101px) { .header-right .menu-toggle { display: none; } }
+@media (max-width: 1100px) {
+  .site-header-inner { grid-template-columns: auto 1fr; }
+  .header-left, .header-right .header-links { display: none; }
+  .brand { justify-self: start; }
+}
+
+/* Full-screen menu on Stone: on-page links in large capitals, products and company links in two columns. */
+.menu { position: fixed; inset: 0; z-index: 120; visibility: hidden; background: var(--stone); color: var(--ink); overflow-y: auto; overflow-x: clip; display: flex; flex-direction: column; }
+.menu-top { height: var(--header-h); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; flex: none; }
+.menu-close { justify-self: end; }
+.menu-body { flex: 1; display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: var(--gap); padding-block: clamp(24px, 6vh, 72px); align-content: center; }
+.menu-page li a { display: inline-block; padding: clamp(3px, .7vh, 7px) 0; font-size: var(--fs-l); line-height: 1.1; letter-spacing: .02em; text-transform: uppercase; transition: color var(--dur-btn) var(--ease-btn); }
+.menu-page li a:hover, .menu-page li a:focus-visible { color: var(--gold-text); }
+.menu-label { font-size: var(--fs-3xs); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 16px; }
+.menu-col ul { display: grid; gap: 8px; font-size: 17px; }
+.menu-bespoke { display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; font-family: var(--serif); font-style: italic; font-size: 22px; color: var(--gold-text); }
+.menu-contact { margin-top: 28px; font-size: 15px !important; color: var(--muted); }
+.menu-col .socials { margin-top: 20px; }
+@media (max-width: 1100px) { .menu-top { grid-template-columns: auto 1fr; } .menu-top > span { display: none; } .menu-top .brand { justify-self: start; } }
+@media (max-width: 860px) { .menu-body { grid-template-columns: 1fr 1fr; align-content: start; } .menu-page { grid-column: 1 / -1; } }
+@media (max-width: 520px) { .menu-body { grid-template-columns: 1fr; } }
+
+/* Footer: Ink ground, the live footer's columns. */
+.site-footer { background: var(--ink); color: var(--on-dark); padding-block: clamp(56px, 6vw, 80px) 28px; font-size: 15px; line-height: 1.6; }
+.footer-logo { display: inline-flex; color: var(--white); margin-bottom: clamp(36px, 4vw, 56px); }
+.footer-logo .logo { width: clamp(150px, 14vw, 210px); height: auto; }
+.footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px 32px; }
+.footer-label { font-size: var(--fs-3xs); text-transform: uppercase; letter-spacing: .06em; color: var(--white); margin-bottom: 14px; }
+.footer-col ul { display: grid; gap: 6px; }
+.footer-city { color: var(--white); }
+.footer-col a:hover, .footer-col a:focus-visible { color: var(--white); }
+.footer-certs { display: flex; align-items: center; gap: 24px; }
+.footer-certs img { width: auto; height: 64px; }
+.footer-bar { margin-top: clamp(40px, 5vw, 64px); padding-top: 22px; border-top: 1px solid color-mix(in srgb, var(--white) 14%, transparent); display: flex; justify-content: space-between; align-items: center; gap: 16px 32px; flex-wrap: wrap; font-size: var(--fs-3xs); text-transform: uppercase; letter-spacing: .04em; }
+.site-footer .socials { color: var(--white); }
+@media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
+
+/* Loading screen (components/Preloader.tsx), on the hero's own Stone so the handover shows no jump. */
+@property --mask-pos { syntax: "<percentage>"; inherits: false; initial-value: 110%; }
+.preloader { position: fixed; inset: 0; z-index: 150; display: none; pointer-events: none; }
+html.is-loading .preloader, html.is-landing .preloader { display: grid; place-items: center; }
+html.is-loading { overflow: hidden; }
+.preloader-ground { position: absolute; inset: 0; background: var(--stone); }
+/* Luxury Places' .loader::before: a 12px backdrop blur masked by a soft band that sweeps up as the ground clears. */
+.preloader-blur { --mask-pos: 110%; position: absolute; inset: 0; z-index: 1; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  mask-image: linear-gradient(to bottom, #000 calc(var(--mask-pos) - 10%), transparent calc(var(--mask-pos) + 10%)); -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--mask-pos) - 10%), transparent calc(var(--mask-pos) + 10%)); }
+.preloader-sign { position: relative; z-index: 2; visibility: hidden; width: clamp(220px, 34vw, 480px); color: var(--ink); }
+.preloader .logo { width: 100%; height: auto; overflow: hidden; }
+.preloader .logo path { transform-box: fill-box; }
+.preloader-line { margin-top: clamp(18px, 2vw, 28px); height: 1px; background: color-mix(in srgb, var(--ink) 12%, transparent); }
+.preloader-line i { display: block; height: 100%; background: var(--gold); transform-origin: left; transform: scaleX(0); }
+.preloader-meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: var(--fs-3xs); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.preloader-count { font-variant-numeric: tabular-nums; color: var(--gold-text); }
+/* Nothing of the page shows before the loader paints: the header waits under it, its logo until the wordmark lands. */
+html.is-loading .site-header [data-hero-part], html.is-loading .site-header .menu-toggle { visibility: hidden; }
+html.is-landing .site-header .brand { visibility: hidden; }

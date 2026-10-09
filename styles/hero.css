@@ -1,0 +1,50 @@
+/* Hero (components/home/Hero.tsx), after Luxury Places' .highlighted_properties-heading + -preview:
+   heading block centred in the upper half, then three frames anchored to the bottom edge. The centre frame is 39vw
+   (their grid-template-columns: 100% 39vw 100%), the side images 63% of its height, the gap --spacing-md.
+   --hero-clip is the centre frame as a clip on the full-viewport film; JS reads it for the closed state. */
+.hero {
+  --card-w: 39vw;
+  --card-h: 54svh;
+  --hero-clip: inset(calc(100% - var(--card-h)) calc((100% - var(--card-w)) / 2) 0% calc((100% - var(--card-w)) / 2));
+  position: relative; height: 100svh; min-height: 560px; overflow: hidden; background: var(--stone);
+}
+.hero-head { position: relative; z-index: 2; height: calc(100% - var(--card-h)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(18px, 2.4vh, 28px); text-align: center; padding-top: calc(var(--header-h) * .7); }
+.hero-title { font-size: var(--fs-xl); line-height: 1.02; letter-spacing: .02em; text-transform: uppercase; }
+.hero-line { display: block; }
+.hero-title em { font-size: 1.12em; line-height: .9; color: var(--gold-text); }
+.hero-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+.hero-stage { position: absolute; left: 0; right: 0; bottom: 0; height: var(--card-h); pointer-events: none; }
+.hero-side { position: absolute; bottom: 0; height: 63%; overflow: hidden; background: color-mix(in srgb, var(--ink) 8%, var(--stone)); }
+.hero-side img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.92); }
+.hero-side-left { right: calc(50% + var(--card-w) / 2 + var(--gap)); width: 30vw; }
+.hero-side-right { left: calc(50% + var(--card-w) / 2 + var(--gap)); width: 30vw; }
+
+.hero-film { position: absolute; inset: 0; z-index: 1; clip-path: var(--hero-clip); background: color-mix(in srgb, var(--ink) 12%, var(--stone)); color: var(--white); }
+.hero-film video { width: 100%; height: 100%; object-fit: cover; filter: saturate(.92); }
+.hero-film::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, color-mix(in srgb, var(--ink) 45%, transparent), transparent 28%); }
+/* Depoluxe-style caption: the italic serif title, bottom left, once the film fills the screen. */
+.hero-caption { position: absolute; z-index: 2; left: var(--gutter); bottom: clamp(20px, 3.4vh, 36px); font-size: var(--fs-m); line-height: 1; visibility: hidden; }
+html:not(.js) .hero-caption { visibility: visible; }
+.hero-pause { position: absolute; z-index: 2; right: calc((100% - var(--card-w)) / 2 + 8px); bottom: clamp(14px, 2.6vh, 28px); display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: var(--fs-3xs); text-transform: uppercase; letter-spacing: .06em; color: var(--white); }
+.hero-pause svg { width: 10px; height: 10px; }
+/* Depoluxe's .progress .line: a hairline in white at 40% with the played part in currentColor. */
+.hero-progress { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; height: 2px; background: color-mix(in srgb, var(--white) 40%, transparent); }
+.hero-progress i { display: block; height: 100%; background: var(--white); transform-origin: left; transform: scaleX(0); }
+
+/* Hero parts wait for the preloader's handover. */
+html.is-loading [data-hero-in], html.is-loading .hero-side, html.is-loading .hero-film { visibility: hidden; }
+
+@media (max-width: 900px) {
+  .hero { --card-w: 58vw; --card-h: 52svh; }
+  .hero-side-left, .hero-side-right { width: 40vw; }
+}
+@media (max-width: 560px) {
+  .hero { --card-w: 72vw; --card-h: 50svh; }
+  .hero-side { height: 55%; }
+  .hero-side-left { right: calc(50% + var(--card-w) / 2 + 12px); }
+  .hero-side-right { left: calc(50% + var(--card-w) / 2 + 12px); }
+  .hero-title { font-size: clamp(2rem, 10vw, 2.6rem); }
+  .hero-caption { font-size: 1.25rem; }
+}
+.hero-probe { position: absolute; bottom: 0; left: 50%; width: var(--card-w); height: var(--card-h); transform: translateX(-50%); visibility: hidden; }
